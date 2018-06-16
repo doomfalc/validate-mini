@@ -1,0 +1,18 @@
+{
+  "name": "validate-mini",
+  "version": "1.0.0",
+  "description": "Minimalistic validation library. Designed to be as little verbose as possible.",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ramda": "^0.25.0"
+  },
+  "devDependencies": {
+    "assert": "^1.4.1",
+    "mocha": "^5.2.0"
+  }
+}
