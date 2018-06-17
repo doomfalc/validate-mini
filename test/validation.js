@@ -1,6 +1,6 @@
 const assert = require("assert");
 
-const { validate, optional } = require("../src/validation");
+const { validate, optional } = require("../src");
 
 function testValidate(rules, input, expected) {
     const validationResult = validate(rules, input);

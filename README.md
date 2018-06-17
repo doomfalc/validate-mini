@@ -123,5 +123,15 @@ const schema = {
     // Validate min and max of Number value
     amount: util.range(0, 100),
 }
-
 ```
+
+## Optional properties
+
+By default, all rules require matching input. To mark rules as optional, use the `optional(<rule>)` function together with any rule you like.
+
+```js
+const { validate, optional, util } = require("validate-mini");
+
+const schema = {
+    middleName: optional(util.is(String))
+};
