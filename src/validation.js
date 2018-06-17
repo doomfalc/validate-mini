@@ -19,7 +19,7 @@ function validateOneProp(rule, input) {
 
     if (R.is(Function, rule)) {
         const validationResult = rule(input);
-        if (validationResult.isValid) {
+        if (validationResult.isValid === false || validationResult.isValid === true) {
             return validationResult;
         }
         return !!validationResult ? validationOk : { isValid, message: "Validation failed" };
