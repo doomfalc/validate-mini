@@ -8,21 +8,26 @@ function getPropertyMessage(validationResult) {
 
 function validateOneProp(rule, input) {
     const isValid = false;
+    const isFunction = R.is(Function, rule);
 
-    if (R.is(String, rule) || R.is(Number, rule) || R.is(Boolean, rule)) {
-        return input === rule ? validationOk : { isValid, message: "Unexpected value (strict equality)" }
+    if (input === undefined && (!isFunction || rule.name !== "optional")) {
+        return { isValid, message: "Missing property" };
     }
 
-    if (R.is(RegExp, rule)) {
-        return rule.test(input) ? validationOk : { isValid, message: "Invalid format" }
-    }
-
-    if (R.is(Function, rule)) {
+    if (isFunction) {
         const validationResult = rule(input);
         if (validationResult.isValid === false || validationResult.isValid === true) {
             return validationResult;
         }
         return !!validationResult ? validationOk : { isValid, message: "Validation failed" };
+    }
+
+    if (R.is(String, rule) || R.is(Number, rule) || R.is(Boolean, rule)) {
+        return input === rule ? validationOk : { isValid, message: `Expected constant ${rule}` }
+    }
+
+    if (R.is(RegExp, rule)) {
+        return rule.test(input) ? validationOk : { isValid, message: "Invalid format" }
     }
 
     if (R.is(Array, rule)) {

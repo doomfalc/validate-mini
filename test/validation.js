@@ -2,9 +2,10 @@ const assert = require("assert");
 
 const { validate, optional } = require("../src");
 
-function testValidate(rules, input, expected) {
+function testValidate(rules, input, expected, additionalFunc) {
     const validationResult = validate(rules, input);
     assert.equal(validationResult.isValid, expected);
+    additionalFunc && additionalFunc(validationResult);
 }
 
 describe("validate", function () {
@@ -31,6 +32,9 @@ describe("validate", function () {
         it("should return { isValid: false } when function rule returns false", function () {
             testValidate({ prop1: () => false }, { prop1: "anything" }, false);
         });
+        it("should return { isValid: false } with specific error message when property is missing", function () {
+            testValidate({ prop1: () => true }, { noProp1: "anything" }, false, result => result.prop1 === "Missing property");
+        })
     });
     describe("validateOneObject", function () {
         const rule = {
