@@ -16,7 +16,7 @@ Define a validation schema
 const schema = {
     firstName: /[A-Z][a-z]{2,20}/,
     lastName: /[A-Z][a-z]{2,20}/,
-}
+};
 ```
 
 Execute the validate() function, supplying your schema and the object to validate.
@@ -60,7 +60,7 @@ To validate against a RegExp:
 ```js
 const schema = {
     age: /^[1-9]{1, 2}$/
-}
+};
 ```
 
 ### Function
@@ -72,7 +72,21 @@ const moment = require("moment");
 
 const schema = {
     dob: value => moment().diff(moment(value), "years") >= 18
-}
+};
+```
+
+Functions take at least one argument as parameter. This parameter represents the value of the corresponding property on the object to validate.
+
+#### Checking against other properties
+
+Functions can also take a second argument, representing the whole object being validated. This allows checking several properties in one function.
+
+```js
+
+const schema = {
+    password: /[A-Z]{8,24}/,
+    confirmPassword: (value, input) => value === input.password,
+};
 ```
 
 ### Arrays
@@ -111,17 +125,17 @@ The library comes with a handful of built-in functions to help defining simple v
 To access the util functions:
 
 ```js
-const { validate, util } = require("validate-mini");
+const { validate, utils } = require("validate-mini");
 
 const schema = {
     // Validate type of value
-    description: util.is(String),
+    description: utils.is(String),
     // Validate min and max length of Number value
-    freeText: util.length(0, 255),
+    freeText: utils.length(0, 255),
     // List of acceptable values (enum like)
-    status: util.oneOf("success", "failure", "pending", "canceled"),
+    status: utils.oneOf("success", "failure", "pending", "canceled"),
     // Validate min and max of Number value
-    amount: util.range(0, 100),
+    amount: utils.range(0, 100),
 }
 ```
 
@@ -130,8 +144,8 @@ const schema = {
 By default, all rules require matching input. To mark rules as optional, use the `optional(<rule>)` function together with any rule you like.
 
 ```js
-const { validate, optional, util } = require("validate-mini");
+const { validate, optional, utils } = require("validate-mini");
 
 const schema = {
-    middleName: optional(util.is(String))
+    middleName: optional(utils.is(String))
 };

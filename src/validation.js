@@ -6,7 +6,7 @@ function getPropertyMessage(validationResult) {
     return validationResult.message || R.omit(["isValid"], validationResult)
 }
 
-function validateOneProp(rule, input) {
+function validateOneProp(rule, input, root) {
     const isValid = false;
     const isFunction = R.is(Function, rule);
 
@@ -15,7 +15,7 @@ function validateOneProp(rule, input) {
     }
 
     if (isFunction) {
-        const validationResult = rule(input);
+        const validationResult = rule(input, root);
         if (validationResult.isValid === false || validationResult.isValid === true) {
             return validationResult;
         }
@@ -44,7 +44,7 @@ function validateOneProp(rule, input) {
 function validateOneObject(props, input) {
     return R.keys(props).reduce((validationResult, key) => {
         const rule = props[key];
-        const propValidation = validateOneProp(rule, input[key]);
+        const propValidation = validateOneProp(rule, input[key], input);
 
         if (propValidation.isValid === false) {
             validationResult.isValid = false;
