@@ -1,6 +1,6 @@
 const assert = require("assert");
 
-const { validate, optional } = require("../src");
+const { optional, pipe, validate } = require("../src");
 
 function testValidate(rules, input, expected, additionalFunc) {
     const validationResult = validate(rules, input);
@@ -71,7 +71,16 @@ describe("validate", function () {
             testValidate(rule, "Just some string", true);
         });
         it("should return { isValid: false } when optional value is supplied and doesn't match defined rule", function () {
-            testValidate(rule, "Just some different string", true);
+            testValidate(rule, "Just some different string", false);
+        });
+    });
+    describe("pipe", function () {
+        const rule = pipe(v => v !== true, v => v !== false);
+        it("should return { isValid: true } when all the piped rules match the input", function () {
+            testValidate(rule, "some valid value", true);
+        });
+        it("should return { isValid: false } when any of the rules doesn't match the input (first rule)", function () {
+            testValidate(rule, true, false);
         });
     });
 });

@@ -10,7 +10,7 @@ function validateOneProp(rule, input, root) {
     const isValid = false;
     const isFunction = R.is(Function, rule);
 
-    if (input === undefined && (!isFunction || rule.name !== "optional")) {
+    if (input === undefined && (!isFunction || rule.name !== "optionalRule")) {
         return { isValid, message: "Missing property" };
     }
 
@@ -41,10 +41,10 @@ function validateOneProp(rule, input, root) {
     return { isValid };
 }
 
-function validateOneObject(props, input) {
+function validateOneObject(props, input, root) {
     return R.keys(props).reduce((validationResult, key) => {
         const rule = props[key];
-        const propValidation = validateOneProp(rule, input[key], input);
+        const propValidation = validateOneProp(rule, input[key], input, root);
 
         if (propValidation.isValid === false) {
             validationResult.isValid = false;
@@ -55,10 +55,10 @@ function validateOneObject(props, input) {
     }, { isValid: true });
 }
 
-function validateArray(props, input) {
+function validateArray(props, input, root) {
     if (R.is(Array, input)) {
         return input.reduce((validationResult, item, index) => {
-            const itemValidation = R.is(Object, item) ? validate(props[0], item) : validateOneProp(props[0], item);
+            const itemValidation = R.is(Object, item) ? validate(props[0], item, root) : validateOneProp(props[0], item, root);
             if (itemValidation.isValid === false) {
                 validationResult.isValid = false;
                 validationResult[index] = getPropertyMessage(itemValidation);
@@ -71,14 +71,36 @@ function validateArray(props, input) {
 }
 
 function optional(rules) {
-    return value => !value || validate(rules, value);
+    return function optionalRule(value, root) {
+        return !value || validate(rules, value, root);
+    };
 }
 
-function validate(rules, input) {
-    return (R.is(Array, rules) ? validateArray : validateOneObject)(rules, input);
+function pipe(...rules) {
+    return (value, root) => {
+        let validationResult = { isValid: true };
+        for (const rule of rules) {
+            validationResult = validate(rule, value, root);
+            if (!validationResult || !validationResult.isValid) {
+                return validationResult;
+            }
+        }
+        return validationResult;
+    };
+}
+
+function validate(rules, input, root = input) {
+    if (R.is(Array, rules)) {
+        return validateArray(rules, input, root);
+    }
+    if (R.is(Object, rules) && !R.is(Function, rules)) {
+        return validateOneObject(rules, input, root);
+    }
+    return validateOneProp(rules, input, root);
 }
 
 module.exports = {
     validate,
-    optional
+    optional,
+    pipe,
 };

@@ -149,3 +149,16 @@ const { validate, optional, utils } = require("validate-mini");
 const schema = {
     middleName: optional(utils.is(String))
 };
+```
+
+## Chain several rules
+
+Apply a sequence of rule using the `pipe(<rules>)` function:
+
+```js
+const { validate, pipe } = require("validate-mini");
+
+const schema = {
+    password: pipe(/[A-Za-z]/, /[0-9]/, /.{8, 255}/)
+};
+```
