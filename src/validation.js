@@ -93,7 +93,7 @@ function validate(rules, input, root = input) {
     if (R.is(Array, rules)) {
         return validateArray(rules, input, root);
     }
-    if (R.is(Object, rules) && !R.is(Function, rules)) {
+    if (R.is(Object, rules) && !R.is(Function, rules) && !R.is(RegExp, rules)) {
         return validateOneObject(rules, input, root);
     }
     return validateOneProp(rules, input, root);

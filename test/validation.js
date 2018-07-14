@@ -76,11 +76,21 @@ describe("validate", function () {
     });
     describe("pipe", function () {
         const rule = pipe(v => v !== true, v => v !== false);
+        const regexRules = pipe(/[0-9]/, /[a-z]/);
         it("should return { isValid: true } when all the piped rules match the input", function () {
             testValidate(rule, "some valid value", true);
         });
         it("should return { isValid: false } when any of the rules doesn't match the input (first rule)", function () {
             testValidate(rule, true, false);
+        });
+        it("should return { isValid: false } when any of the rules doesn't match the input (second rule)", function () {
+            testValidate(rule, false, false);
+        });
+        it("should return { isValid: true } when all the input matches all the piped regexes", function () {
+            testValidate(regexRules, "0a", true);
+        });
+        it("should return { isValid: false } when the input doesn't match one of the piped regexes", function () {
+            testValidate(regexRules, "0", false);
         });
     });
 });

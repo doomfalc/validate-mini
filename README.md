@@ -159,6 +159,6 @@ Apply a sequence of rule using the `pipe(<rules>)` function:
 const { validate, pipe } = require("validate-mini");
 
 const schema = {
-    password: pipe(/[A-Za-z]/, /[0-9]/, /.{8, 255}/)
+    password: pipe(/[A-Za-z]/, /[0-9]/, /.{8,255}/)
 };
 ```
