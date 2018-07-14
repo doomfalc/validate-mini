@@ -31,11 +31,11 @@ function validateOneProp(rule, input, root) {
     }
 
     if (R.is(Array, rule)) {
-        return validateArray(rule, input);
+        return validateArray(rule, input, root);
     }
 
     if (R.is(Object, rule)) {
-        return validate(rule, input);
+        return validate(rule, input, root);
     }
 
     return { isValid };
