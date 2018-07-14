@@ -44,7 +44,7 @@ function validateOneProp(rule, input, root) {
 function validateOneObject(props, input, root) {
     return R.keys(props).reduce((validationResult, key) => {
         const rule = props[key];
-        const propValidation = validateOneProp(rule, input[key], input, root);
+        const propValidation = validateOneProp(rule, input[key], root);
 
         if (propValidation.isValid === false) {
             validationResult.isValid = false;
