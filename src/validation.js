@@ -1,14 +1,14 @@
-const R = require("ramda");
+const internals = require("./internals");
 
 const validationOk = { isValid: true };
 
 function getPropertyMessage(validationResult) {
-    return validationResult.message || R.omit(["isValid"], validationResult)
+    return validationResult.message || internals.prune(validationResult);
 }
 
 function validateOneProp(rule, input, root) {
     const isValid = false;
-    const isFunction = R.is(Function, rule);
+    const isFunction = internals.is(Function, rule);
 
     if (input === undefined && (!isFunction || rule.name !== "optionalRule")) {
         return { isValid, message: "Missing property" };
@@ -22,19 +22,19 @@ function validateOneProp(rule, input, root) {
         return !!validationResult ? validationOk : { isValid, message: "Validation failed" };
     }
 
-    if (R.is(String, rule) || R.is(Number, rule) || R.is(Boolean, rule)) {
+    if (internals.is(String, rule) || internals.is(Number, rule) || internals.is(Boolean, rule)) {
         return input === rule ? validationOk : { isValid, message: `Expected constant ${rule}` }
     }
 
-    if (R.is(RegExp, rule)) {
+    if (internals.is(RegExp, rule)) {
         return rule.test(input) ? validationOk : { isValid, message: "Invalid format" }
     }
 
-    if (R.is(Array, rule)) {
+    if (internals.is(Array, rule)) {
         return validateArray(rule, input, root);
     }
 
-    if (R.is(Object, rule)) {
+    if (internals.is(Object, rule)) {
         return validate(rule, input, root);
     }
 
@@ -42,7 +42,7 @@ function validateOneProp(rule, input, root) {
 }
 
 function validateOneObject(props, input, root) {
-    return R.keys(props).reduce((validationResult, key) => {
+    return Object.keys(props).reduce((validationResult, key) => {
         const rule = props[key];
         const propValidation = validateOneProp(rule, input[key], root);
 
@@ -56,9 +56,9 @@ function validateOneObject(props, input, root) {
 }
 
 function validateArray(props, input, root) {
-    if (R.is(Array, input)) {
+    if (internals.is(Array, input)) {
         return input.reduce((validationResult, item, index) => {
-            const itemValidation = R.is(Object, item) ? validate(props[0], item, root) : validateOneProp(props[0], item, root);
+            const itemValidation = internals.is(Object, item) ? validate(props[0], item, root) : validateOneProp(props[0], item, root);
             if (itemValidation.isValid === false) {
                 validationResult.isValid = false;
                 validationResult[index] = getPropertyMessage(itemValidation);
@@ -90,10 +90,10 @@ function pipe(...rules) {
 }
 
 function validate(rules, input, root = input) {
-    if (R.is(Array, rules)) {
+    if (internals.is(Array, rules)) {
         return validateArray(rules, input, root);
     }
-    if (R.is(Object, rules) && !R.is(Function, rules) && !R.is(RegExp, rules)) {
+    if (internals.is(Object, rules) && !internals.is(Function, rules) && !internals.is(RegExp, rules)) {
         return validateOneObject(rules, input, root);
     }
     return validateOneProp(rules, input, root);
