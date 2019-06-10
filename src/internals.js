@@ -1,4 +1,7 @@
 function is(type, obj) {
+    if (obj === false) {
+        return type === Boolean;
+    }
     return obj && type && obj.constructor.name === type.name;
 }
 
