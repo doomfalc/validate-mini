@@ -2,5 +2,6 @@ const validator = require("./validation");
 
 module.exports = {
     ...validator,
-    utils: require("./utils")
+    is: require("./is"),
+    utils: require("./utils"),
 };

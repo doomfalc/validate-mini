@@ -125,11 +125,14 @@ The library comes with a handful of built-in functions to help defining simple v
 To access the util functions:
 
 ```js
-const { validate, utils } = require("validate-mini");
+const { validate, is, utils } = require("validate-mini");
 
 const schema = {
-    // Validate type of value
-    description: utils.is(String),
+    products: is.array,
+    accept: is.boolean,
+    amount: is.number,
+    someObjecT: is.object,
+    description: is.string,
     // Validate min and max length of Number value
     freeText: utils.length(0, 255),
     // List of acceptable values (enum like)
@@ -138,6 +141,8 @@ const schema = {
     amount: utils.range(0, 100),
 }
 ```
+
+**Note:** When possible, avoid using `utils.is`, as it creates new functions on every call. Use the `is.xxx` functions instead.
 
 ## Optional properties
 

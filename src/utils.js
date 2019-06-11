@@ -1,4 +1,4 @@
-const R = require("ramda");
+const internals = require("./internals");
 
 function returnValidationResult(success, errorMessage) {
     return { 
@@ -20,7 +20,7 @@ function length(min, max) {
 }
 
 function is(type) {
-    return value => returnValidationResult(R.is(type, value), "Unexpected type");
+    return value => returnValidationResult(internals.is(type, value), "Unexpected type");
 }
 
 module.exports = {
